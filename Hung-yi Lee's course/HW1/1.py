@@ -9,11 +9,11 @@ w=[]
 wx=[]
 lg=[]
 global b
-b=-26
+b=0
 global lgb
 lgb=0
 global datelen
-datelen=4
+datelen=2
 
 reader=csv.reader(open('train.csv', encoding='gbk',errors="ignore"))
 for item in reader:
@@ -39,20 +39,23 @@ for i in range(239,-1,-1):#去除无效数据0-6、10、12-13、16-17,
     del data[i*18+10]
     for j in range(6,-1,-1):
         del data[i*18+j]
-# #归一化处理
-# for k in range(10):
-#     max=data[k][0]
-#     min=data[k][0]
-#     for i in range(240):
-#         for j in range(24):
-#             if data[i*10+k][j] >max:
-#                 max=data[i*10+k][j]
-#             if data[i*10+k][j] <min:
-#                 min=data[i*10+k][j]
-#     GAP=max-min
-#     for i in range(240):
-#         for j in range(24):
-#             data[i*10+k][j]=(data[i*10+k][j]-min)/GAP
+data_2 = []
+data_2 = data.copy()
+print (data_2)
+#归一化处理
+for k in range(6):
+    max=data[k][0]
+    min=data[k][0]
+    for i in range(240):
+        for j in range(24):
+            if data[i*6+k][j] >max:
+                max=data[i*6+k][j]
+            if data[i*6+k][j] <min:
+                min=data[i*6+k][j]
+    GAP=max-min
+    for i in range(240):
+        for j in range(24):
+            data[i*6+k][j]=(data[i*6+k][j]-min)/GAP
 
 for i in range(6):#初始化系数
     w.append([])
@@ -61,7 +64,7 @@ for i in range(6):#初始化系数
     for j in range(datelen):
         wx[i].append(0)
         lg[i].append(0)
-        w[i].append(0.1)
+        w[i].append(1)
 
 
 for d in range(240):
@@ -91,7 +94,8 @@ def DG(miu,iter):
         g = 0
         for i in range(240):
             for j in range(24-datelen):
-                tem=func(i,j)-data[2+i*6][j+datelen]
+                tem=func(i,j)-data_2[2+i*6][j+datelen]
+
                 g=g+tem
                 error=error+tem**2
         for i in range(6):
@@ -108,7 +112,7 @@ def DG(miu,iter):
         global b
         b=b-(miu*G)
         print("第"+str(t+1)+"次迭代   误差为："+str(error/(240*(24-datelen))))
-DG(0.0000000001,200)
+DG(0.00001,50)
 
 
 f = open("para.txt",'w')

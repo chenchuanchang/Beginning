@@ -43,20 +43,40 @@ for it in f:
     else:
         w[i].append(float(lis[0]))
     i=i+1
+
+#归一化处理
+for k in range(6):
+    max=data[k][0]
+    min=data[k][0]
+    for i in range(240):
+        for j in range(8):
+            if data[i*6+k][j] >max:
+                max=data[i*6+k][j]
+            if data[i*6+k][j] <min:
+                min=data[i*6+k][j]
+    GAP=max-min
+    for i in range(240):
+        for j in range(8):
+            data[i*6+k][j]=(data[i*6+k][j]-min)/GAP
+
 def func(i,j):
     res=w[6][0]
     global datelen
     for k in range(6):
         for q in range(datelen):
             res=res+w[k][q]*data[k+i*6][j+q]
+            # print(q)
+            # print(data[k+i*6][j+q])
     return res
 
+# print (data)
 f = open("test_answer.txt",'w')
 
 error = 0
 f.write("date        expected PM2.5         actual PM2.5\n")
 for i in range(240):
-    F=func(i,9-datelen)
+    F=func(i,8-datelen)
+    # print (F)
     f.write("id_"+str(i)+"     "+str(F)+"        "+str(data[2+i*6][8])+"\n")
     tem=F-data[2+i*6][8]
     error=error+tem**2
