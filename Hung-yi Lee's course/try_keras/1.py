@@ -30,8 +30,11 @@ print("载入完成")
 
 model=ke.Sequential()
 model.add(Dense(input_dim=28*28,units=500,activation='relu'))
+# model.add(Dropout(0.5))
 model.add(Dense(units=500,activation='relu'))
+# model.add(Dropout(0.5))
 model.add(Dense(units=10,activation='softmax'))
+# model.add(Dropout(0.5))
 model.compile(loss="categorical_crossentropy",
               optimizer='adam',
               metrics=['accuracy'])
