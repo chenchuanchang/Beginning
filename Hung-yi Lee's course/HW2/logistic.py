@@ -21,26 +21,36 @@ for i in f:
     #     print(tem)
     x.append([])
     for j in tem:
-        x[IDnum_x].append(int(j))
+        x[IDnum_x].append(float(j))
     # print (x[IDnum_x])
     IDnum_x=IDnum_x+1
 
 # print(IDnum_x)
 for i in x[0]:
-    w.append(random.uniform(0,0.1))
+    w.append(0)
     wx.append(0)
     Wnum_x=Wnum_x+1
-w[0]=random.uniform(0.00001,0.001)
-w[1]=-random.uniform(0.00001,0.0001)
-w[3]=random.uniform(0.00001,0.0001)
-w[5]=random.uniform(0.00001,0.001)
+
+def nomal(x=[]):
+    for i in range(6):
+        max_x=x[0][i]
+        min_x=x[0][i]
+        for j in range(len(x)):
+            if x[j][i]>max_x:
+                max_x=x[j][i]
+            if x[j][i]<min_x:
+                min_x=x[j][i]
+        ran=max_x-min_x
+        for j in range(len(x)):
+            x[j][i]=(x[j][i]-min_x)/ran
+
 f = open("Y_train")
 flag = False
 for i in f:
     if flag==False:
         flag=True
         continue
-    y.append(int(i[0:1]))
+    y.append(float(i[0:1]))
 # print (y)
 
 def func(i,b):
@@ -58,9 +68,22 @@ def func(i,b):
         return 1
     else:
         return 0
+nomal(x)
+# print(x[0])
+
+def Write(b,error,acc):
+    f = open("para.txt",'w')
+    for i in range(len(w)):
+        f.write(str(w[i])+'\n')
+    f.write(str(b))
+    f.close()
+    f=open("para_log.txt",'w')
+    f.write(str(error)+'\n')
+    f.write(str(acc)+'\n')
 
 def DG(miu,iter,b):
     lasterror=1000000
+
     for t in range(iter):
         error=0
         bx=0
@@ -77,17 +100,11 @@ def DG(miu,iter,b):
             w[i]=w[i]+miu*wx[i]
             # print(miu*wx[i])
         b=b+miu*bx
-        if error>lasterror:
-            return b
-        else:
+        if error<lasterror:
             lasterror=error
+            Write(b,error,(IDnum_x-error)/IDnum_x)
         print("第"+str(t+1)+"次迭代   误差为："+str(error)+"   正确率为："+str((IDnum_x-error)/IDnum_x))
-        print(w)
+        # print(w)
     return b
-b=DG(0.0000000000000001,1000,0)
+b=DG(0.000001,100,0)
 
-f = open("para.txt",'w')
-for i in range(len(w)):
-    f.write(str(w[i])+'\n')
-f.write(str(b))
-f.close()
