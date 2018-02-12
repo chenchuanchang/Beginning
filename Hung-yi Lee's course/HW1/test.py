@@ -49,6 +49,8 @@ def func(i,j):
     for k in range(6):
         for q in range(datelen):
             res=res+w[k][q]*data[k+i*6][j+q]
+    if res<0:
+        return 0
     return res
 
 f = open("test_answer.txt",'w')
